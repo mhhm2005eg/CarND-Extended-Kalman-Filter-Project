@@ -76,9 +76,6 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
     MatrixXd &R_ = R_radar_;
 
     MatrixXd Hj;
-    VectorXd z_ = tools.PolarToCartesian(z);
-    //z_[0] = x_[0];
-    //z_[1] = x_[1];
     Hj = tools.CalculateJacobian(x_);
 
     VectorXd y(3);
@@ -87,23 +84,20 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
     //y = z - Hj * x_;//cout<<"KalmanFilter::UpdateEKF"<<5<<endl;
     
     // Recalculate x object state to rho, theta, rho_dot coordinates
-    VectorXd h = VectorXd(3); // h(x_)
-/*
     double rho = sqrt(x_(0)*x_(0) + x_(1)*x_(1));
     double theta = atan2(x_(1) , x_(0));
     double rho_dot = (x_(0)*x_(2) + x_(1)*x_(3)) / rho;
+    VectorXd h = VectorXd(3); // h(x_)
     h << rho, theta, rho_dot;
-*/
-    h = tools.CartesianToPolar(x_);
-    y = z - h;//Hj*x_;//-h
+
+    y = z - h;
     if (y[1] > M_PI){
         y[1] -= 2*M_PI;
     }
     else if (y[1] < -M_PI){
         y[1] += 2*M_PI;
     }
-    //y[1] = atan2(tan(y[1]) , 1);
-    S = Hj * P_*Hj.transpose() + R_;
+    S = Hj * P_*Hj.transpose() + R_;//cout<<"KalmanFilter::UpdateEKF"<<6<<endl;
     K = P_ * Hj.transpose()*S.inverse();
     // new state    
     x_ = x_ + K * y;
@@ -123,20 +117,7 @@ void KalmanFilter::update_Q(double delta_t, double variance_ax, double variance_
 		0, delta_t3* variance_ay, 0, delta_t2* variance_ay;
 	Q_ = ret;
 }
-#if 0
-void KalmanFilter::update_Q(double dt, double noise_ax, double noise_ay) {
-	// Q = G * a * a.T * G.T
-    float dt_2 = dt * dt;
-    float dt_3 = dt_2 * dt;
-    float dt_4 = dt_3 * dt;
-    Eigen::MatrixXd ret = MatrixXd(4, 4);
-        ret <<  dt_4/4*noise_ax, 0, dt_3/2*noise_ax, 0,
-                   0, dt_4/4*noise_ay, 0, dt_3/2*noise_ay,
-                   dt_3/2*noise_ax, 0, dt_2*noise_ax, 0,
-                   0, dt_3/2*noise_ay, 0, dt_2*noise_ay;
-	Q_ = ret;
-}
-#endif
+
 void KalmanFilter::init_R_laser(double variance_px, double variance_py) {
 	Eigen::MatrixXd ret(2, 2);
 	ret << variance_px, 0, 0,variance_py;

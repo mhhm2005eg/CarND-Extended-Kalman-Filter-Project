@@ -9,6 +9,8 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using std::string;
 using std::vector;
+using std::cout;
+using std::endl;
 
 // for convenience
 using json = nlohmann::json;
@@ -28,10 +30,10 @@ string hasData(string s) {
   }
   return "";
 }
-
+static unsigned int u8index;
 int main() {
   uWS::Hub h;
-
+  u8index = 0;
   // Create a Kalman Filter instance
   FusionEKF fusionEKF;
 
@@ -55,6 +57,8 @@ int main() {
         string event = j[0].get<string>();
         
         if (event == "telemetry") {
+           u8index++;  
+
           // j[1] is the data JSON object
           string sensor_measurement = j[1]["sensor_measurement"];
           
@@ -108,6 +112,7 @@ int main() {
           ground_truth.push_back(gt_values);
           
           // Call ProcessMeasurement(meas_package) for Kalman filter
+          //cout<<"fusionEKF.ProcessMeasurement"<<endl;
           fusionEKF.ProcessMeasurement(meas_package);       
 
           // Push the current estimated x,y positon from the Kalman filter's 
@@ -126,8 +131,10 @@ int main() {
           estimate(3) = v2;
         
           estimations.push_back(estimate);
+          //cout<<"tools.CalculateRMSE"<<0<<endl;
 
           VectorXd RMSE = tools.CalculateRMSE(estimations, ground_truth);
+          //cout<<"tools.CalculateRMSE"<<1<<endl;
 
           json msgJson;
           msgJson["estimate_x"] = p_x;
@@ -137,12 +144,14 @@ int main() {
           msgJson["rmse_vx"] = RMSE(2);
           msgJson["rmse_vy"] = RMSE(3);
           auto msg = "42[\"estimate_marker\"," + msgJson.dump() + "]";
-          // std::cout << msg << std::endl;
+          std::cout << u8index<<":"<< msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
 
         }  // end "telemetry" if
 
       } else {
+        //std::cout << "I am else!!!" << std::endl;
+
         string msg = "42[\"manual\",{}]";
         ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
       }

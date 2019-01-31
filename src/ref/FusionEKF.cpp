@@ -11,7 +11,7 @@ using std::vector;
 
 #define RADAR_ACTIVE true
 #define LIDAR_ACTIVE true
-#define FIRST_UPDATE true
+
 /**
  * Constructor.
  */
@@ -46,21 +46,21 @@ FusionEKF::FusionEKF() {
     int no_of_measurments = 2;
     //x = VectorXd(2);
     static VectorXd x(no_of_states);
-    x << 0.0001, 0.0001, 0.0, 0.0;
+    x << 0.01, 0.01, 0.0, 0.0;
     static MatrixXd I = MatrixXd::Identity(no_of_states, no_of_states);
     static MatrixXd P(no_of_states, no_of_states);// = I * 1000;
     static VectorXd u = VectorXd::Zero(no_of_states); // External forces (if we can measure it)
-    static MatrixXd F = MatrixXd::Zero(no_of_states, no_of_states);
-    static MatrixXd H = MatrixXd::Zero(no_of_measurments, no_of_states);
-    static MatrixXd R = MatrixXd::Zero(no_of_measurments, no_of_measurments); // uncertainty within the measuement function
-    static MatrixXd Q = MatrixXd::Zero(no_of_states, no_of_states); // uncertainty within the transition function
+    static MatrixXd F = MatrixXd(no_of_states, no_of_states);
+    static MatrixXd H = MatrixXd(no_of_measurments, no_of_states);
+    static MatrixXd R = MatrixXd(no_of_measurments, no_of_measurments); // uncertainty within the measuement function
+    static MatrixXd Q = MatrixXd(no_of_states, no_of_states); // uncertainty within the transition function
 
     H_laser_ << 1, 0, 0, 0,
                 0, 1, 0, 0;
     P <<    1, 0, 0, 0,
             0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1;
+            0, 0, 1000, 0,
+            0, 0, 0, 1000;
   ekf_.Init(x, P, F, H, R, Q, R_laser_, R_radar_);
 
 }
@@ -97,19 +97,25 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       // TODO: Convert radar from polar to cartesian coordinates 
       //         and initialize state.
      //ekf_.init_R_Radar(0.09, 0.0009, 0.09); 
-#if FIRST_UPDATE    
+#if false    
      ekf_.UpdateEKF(measurement_pack.raw_measurements_);
 #else     
- 
-     ekf_.x_ = tools.PolarToCartesian(measurement_pack.raw_measurements_);
+          float rho = measurement_pack.raw_measurements_[0]; // range
+	  float phi = measurement_pack.raw_measurements_[1]; // bearing
+	  float rho_dot = measurement_pack.raw_measurements_[2]; // velocity of rho
+	  // Coordinates convertion from polar to cartesian
+	  float x = rho * cos(phi); 
+	  float y = rho * sin(phi);
+	  float vx = rho_dot * cos(phi);
+	  float vy = rho_dot * sin(phi);
+	  ekf_.x_ << x, y, vx , vy;
 #endif    
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
       // TODO: Initialize state.
      //ekf_.init_R_laser(0.0225, 0.0225);  
-#if FIRST_UPDATE        
+#if false        
      ekf_.Update(measurement_pack.raw_measurements_);
-     //ekf_.Predict();
 #else
      ekf_.x_<< measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1],0, 0;
 #endif
@@ -134,7 +140,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    */
 
   ekf_.update_F(delta_timestamp_);
-  ekf_.update_Q(delta_timestamp_, 9, 9);
+  ekf_.update_Q(delta_timestamp_, 25, 25);
   ekf_.Predict();
 
 
@@ -165,7 +171,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   }
 
   // print the output
-  cout << "x_ = " << ekf_.x_ << endl;
-  cout << "P_ = " << ekf_.P_ << endl;
+  //cout << "x_ = " << ekf_.x_ << endl;
+  //cout << "P_ = " << ekf_.P_ << endl;
 }
 

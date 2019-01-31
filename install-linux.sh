@@ -1,6 +1,5 @@
 #!/bin/bash
 source /etc/os-release || echo 'Warning: /etc/os-release was not found'
-
 if [[ " $ID_LIKE " == *' archlinux '* ]]; then
   sudo pacman -S git libuv openssl gcc cmake make
 else

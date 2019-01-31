@@ -1,0 +1,38 @@
+The CXX compiler identification could not be found in "C:/Data/Nano/projects/01_repositories/CarND-Extended-Kalman-Filter-Project/CMakeFiles/3.12.3/CompilerIdCXX/a.exe"
+
+Detecting C compiler ABI info failed to compile with the following output:
+Change Dir: C:/Data/Nano/projects/01_repositories/CarND-Extended-Kalman-Filter-Project/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/MinGW/msys/1.0/bin/make.exe" "cmTC_3d2bd/fast"
+/usr/bin/make -f CMakeFiles/cmTC_3d2bd.dir/build.make CMakeFiles/cmTC_3d2bd.dir/build
+make[1]: Entering directory `/c/Data/Nano/projects/01_repositories/CarND-Extended-Kalman-Filter-Project/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_3d2bd.dir/CMakeCCompilerABI.c.obj
+C:/Data/Nano/projects/01_repositories/CarND-Extended-Kalman-Filter-Project/nbproject/private/tools/localhost/MinGW/gcc.exe    -o CMakeFiles/cmTC_3d2bd.dir/CMakeCCompilerABI.c.obj   -c "C:/Program Files/CMake/share/cmake-3.12/Modules/CMakeCCompilerABI.c"
+gcc.exe: error: C:/Program: No such file or directory
+gcc.exe: error: Files/CMake/share/cmake-3.12/Modules/CMakeCCompilerABI.c: No such file or directory
+gcc.exe: fatal error: no input files
+compilation terminated.
+make[1]: *** [CMakeFiles/cmTC_3d2bd.dir/CMakeCCompilerABI.c.obj] Error 1
+make[1]: Leaving directory `/c/Data/Nano/projects/01_repositories/CarND-Extended-Kalman-Filter-Project/CMakeFiles/CMakeTmp'
+make: *** [cmTC_3d2bd/fast] Error 2
+
+
+
+Detecting CXX compiler ABI info failed to compile with the following output:
+Change Dir: C:/Data/Nano/projects/01_repositories/CarND-Extended-Kalman-Filter-Project/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/MinGW/msys/1.0/bin/make.exe" "cmTC_8abee/fast"
+/usr/bin/make -f CMakeFiles/cmTC_8abee.dir/build.make CMakeFiles/cmTC_8abee.dir/build
+make[1]: Entering directory `/c/Data/Nano/projects/01_repositories/CarND-Extended-Kalman-Filter-Project/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_8abee.dir/CMakeCXXCompilerABI.cpp.obj
+C:/Data/Nano/projects/01_repositories/CarND-Extended-Kalman-Filter-Project/nbproject/private/tools/localhost/MinGW/g++.exe     -o CMakeFiles/cmTC_8abee.dir/CMakeCXXCompilerABI.cpp.obj -c "C:/Program Files/CMake/share/cmake-3.12/Modules/CMakeCXXCompilerABI.cpp"
+g++.exe: error: C:/Program: No such file or directory
+g++.exe: error: Files/CMake/share/cmake-3.12/Modules/CMakeCXXCompilerABI.cpp: No such file or directory
+g++.exe: fatal error: no input files
+compilation terminated.
+make[1]: *** [CMakeFiles/cmTC_8abee.dir/CMakeCXXCompilerABI.cpp.obj] Error 1
+make[1]: Leaving directory `/c/Data/Nano/projects/01_repositories/CarND-Extended-Kalman-Filter-Project/CMakeFiles/CMakeTmp'
+make: *** [cmTC_8abee/fast] Error 2
+
+
+
