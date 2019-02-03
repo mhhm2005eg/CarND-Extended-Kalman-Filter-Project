@@ -12,7 +12,7 @@ using std::vector;
 #define LIDAR_ACTIVE true
 #define RADAR_ACTIVE true
 #define PREDICT_ACTIVE true
-#define FIRST_UPDATE false
+#define FIRST_UPDATE true
 
 int no_of_samples = 500;
 int current_sample = 0;
