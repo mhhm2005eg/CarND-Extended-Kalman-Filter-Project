@@ -13,7 +13,7 @@ using std::vector;
 #define RADAR_ACTIVE true
 #define PREDICT_ACTIVE true
 #define FIRST_UPDATE true
-
+#define ALLOW_READINGS_CONVERSION false
 int no_of_samples = 500;
 int current_sample = 0;
 
@@ -58,11 +58,11 @@ FusionEKF::FusionEKF() {
     static MatrixXd F = MatrixXd::Zero(no_of_states, no_of_states);
     //static MatrixXd H = MatrixXd::Zero(no_of_measurments, no_of_states);
     static MatrixXd R = MatrixXd::Zero(no_of_measurments, no_of_measurments); // uncertainty within the measuement function
-    static MatrixXd Q = MatrixXd::Zero(no_of_states, no_of_states); // uncertainty within the transition function
+    static MatrixXd Q = MatrixXd::Ones(no_of_states, no_of_states); // uncertainty within the transition function
 
     P(0,0) = 1;
     P(1,1) = 1;
-    Q = P;
+    //Q = P;
     H_laser_ << 1, 0, 0, 0,
                 0, 1, 0, 0;
   ekf_.Init(x, P, F, H_laser_, R, Q, R_laser_, R_radar_);
@@ -172,9 +172,11 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
      //rmse = tools.CalculateRMSE(ekf_.x_.array(),measurement_pack.ground_truth.array());
      //cout<<"RADAR update RMSE: "<<rmse<<endl;
 #else
-     ekf_.update_H(delta_timestamp_);
-     Eigen::VectorXd tt = tools.PolarToCartesian(measurement_pack.raw_measurements_);
-     ekf_.Update(tt.head(2));
+    #if ALLOW_READINGS_CONVERSION
+         ekf_.update_H(delta_timestamp_);
+         Eigen::VectorXd tt = tools.PolarToCartesian(measurement_pack.raw_measurements_);
+         ekf_.Update(tt.head(2));
+    #endif
 #endif
   } else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER){
     // TODO: Laser updates
@@ -185,12 +187,13 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     //rmse = tools.CalculateRMSE(ekf_.x_.array(),measurement_pack.ground_truth.array());
     //cout<<"Laser Update RMSE: "<<rmse<<endl;
 #else
-    Eigen::VectorXd tt(4);
-    tt << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1],
-            ekf_.x_[2], ekf_.x_[3];
-    tt = tools.CartesianToPolar(tt);
-    ekf_.UpdateEKF(tt);
-
+    #if ALLOW_READINGS_CONVERSION
+        Eigen::VectorXd tt(4);
+        tt << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1],
+                ekf_.x_[2], ekf_.x_[3];
+        tt = tools.CartesianToPolar(tt);
+        ekf_.UpdateEKF(tt);
+    #endif
 #endif
 
   }
