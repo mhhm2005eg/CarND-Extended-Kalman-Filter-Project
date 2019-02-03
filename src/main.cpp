@@ -103,7 +103,12 @@ int main() {
           iss >> y_gt;
           iss >> vx_gt;
           iss >> vy_gt;
-
+          //meas_package.ground_truth << x_gt, y_gt, vx_gt, vy_gt;
+          meas_package.ground_truth = VectorXd(4);
+          meas_package.ground_truth[0] = x_gt;
+          meas_package.ground_truth[1] = y_gt;
+          meas_package.ground_truth[2] = vx_gt;
+          meas_package.ground_truth[3] = vy_gt;
           VectorXd gt_values(4);
           gt_values(0) = x_gt;
           gt_values(1) = y_gt; 
@@ -144,7 +149,7 @@ int main() {
           msgJson["rmse_vx"] = RMSE(2);
           msgJson["rmse_vy"] = RMSE(3);
           auto msg = "42[\"estimate_marker\"," + msgJson.dump() + "]";
-          std::cout << u8index<<":"<< msg << std::endl;
+          //std::cout << u8index<<":"<< msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
 
         }  // end "telemetry" if

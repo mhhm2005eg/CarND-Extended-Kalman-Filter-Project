@@ -13,6 +13,7 @@ class MeasurementPackage {
   long long timestamp_;
 
   Eigen::VectorXd raw_measurements_;
+  Eigen::VectorXd ground_truth;
 };
 
 #endif // MEASUREMENT_PACKAGE_H_

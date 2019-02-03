@@ -63,6 +63,44 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 	// return the result
 	return rmse;
 }
+
+Eigen::VectorXd Tools::CalculateRMSE(const Eigen::VectorXd &estimations,
+	const Eigen::VectorXd &ground_truth) {
+    //cout<<"Tools::CalculateRMSE"<<01<<endl;
+	Eigen::VectorXd rmse(1);
+	//rmse << 0, 0, 0, 0;
+
+	// check the validity of the following inputs:
+	//  * the estimation vector size should not be zero
+	//  * the estimation vector size should equal ground truth vector size
+	if (estimations.size() != ground_truth.size()
+		|| estimations.size() == 0) {
+		cout << "Invalid estimation or ground_truth data" << endl;
+		return rmse;
+	}
+
+        float t_rmse = 0;
+	// accumulate squared residuals
+	for (unsigned int i = 0; i < estimations.size(); ++i) {
+
+		float residual = estimations[i] - ground_truth[i];
+
+		// coefficient-wise multiplication
+		residual = pow(residual, 2);
+		t_rmse += residual;
+	}
+
+	// calculate the mean
+	t_rmse = t_rmse / estimations.size();
+
+	// calculate the squared root
+	rmse << sqrt(t_rmse);
+
+        //cout<<"Tools::CalculateRMSE"<<02<<endl;
+
+	// return the result
+	return rmse;
+}
 #if 0
 MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
     //cout<<"Tools::CalculateJacobian"<<0<<endl;
@@ -150,10 +188,13 @@ VectorXd Tools::CartesianToPolar(const VectorXd& cartesian) {
   float vy = cartesian(3);
 
   float rho = sqrt(px*px + py*py);
-  float phi = atan2(py, px);
+  float phi = atan2(py, px);//atan(py/ px);//
   float drho = 0;
   if (rho > THRESH) {
     drho = (px*vx + py*vy) / rho;
+  }
+  else{
+      return polar;
   }
 
   polar << rho, phi, drho;
