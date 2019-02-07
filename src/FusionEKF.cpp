@@ -181,7 +181,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   } else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER){
     // TODO: Laser updates
 #if LIDAR_ACTIVE == true
-    ekf_.update_H(delta_timestamp_);
+    ekf_.update_H();
     //ekf_.init_R_laser(0.0225, 0.0225);      
     ekf_.Update(measurement_pack.raw_measurements_);
     //rmse = tools.CalculateRMSE(ekf_.x_.array(),measurement_pack.ground_truth.array());

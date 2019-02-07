@@ -76,7 +76,7 @@ class KalmanFilter {
    void init_R_laser(double variance_px, double variance_py);
    void init_R_Radar(double variance_p, double variance_Q, double variance_Qd);
    void update_F(double delta_t);
-   void update_H(double delta_t);
+   void update_H();
 
 
 

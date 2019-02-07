@@ -173,9 +173,9 @@ void KalmanFilter::update_F(double delta_t) {
         ret(1, 3) = delta_t;
 	F_ = ret;
 }
-void KalmanFilter::update_H(double delta_t) {
+void KalmanFilter::update_H() {
 	Eigen::MatrixXd ret = MatrixXd(2,4);
-        ret <<1, 0, delta_t,0, 
-              0, 1, 0      , delta_t;
+        ret <<1, 0, 0,0, 
+              0, 1, 0 , 0;
 	H_ = ret;
 }
